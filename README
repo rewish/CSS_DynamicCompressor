@@ -1,4 +1,4 @@
-@import to parse, bind to compression.
+@import to parse, concatenation and compression.
 
 [Example]
 http://rewish.org/share/css/_import.css
