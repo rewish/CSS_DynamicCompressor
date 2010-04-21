@@ -1,0 +1,6 @@
+@import to parse, bind to compression.
+
+[Example]
+http://rewish.org/share/css/_import.css
+to
+http://rewish.org/share/css/import.css
