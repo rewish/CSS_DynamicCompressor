@@ -10,6 +10,7 @@ try {
 		//->setExpireDay(30)
 		//->setDirectory('/path/to/css/')
 		//->setCSSFiles(array('hoge.css', 'fuga.css', 'piyo.css'))
+		//->setCSS3Fix(true)
 		->setBaseUrl()
 
 		//->compression();
