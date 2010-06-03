@@ -39,15 +39,7 @@ class CSS_DynamicCompressor
 				'-webkit-$1$2:$3',
 				'-moz-$1$2:$3'
 			),
-			// gradient
-			'/background-image:gradient([^;\}]+)/' => array(
-				'background-image:gradient$1',
-				'background-image:-webkit-gradient$1',
-			),
-			'/background:(.+?)?gradient([^;\}]+)/' => array(
-				'background:$1gradient$2',
-				'background:$1-webkit-gradient$2'
-			)
+			// @TODO gradient
 		);
 
 	protected function __construct() {}
