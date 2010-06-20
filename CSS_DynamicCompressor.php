@@ -256,8 +256,6 @@ class CSS_DynamicCompressor
 
 	protected function _addCopyright()
 	{
-		// Jesus...would you really delete this?
-		// Oh my god... X(
 		$this->_comment[] = ' * Powered by ' . __CLASS__ . ' - v' . self::VERSION;
 		$this->_comment[] = ' * http://rewish.org/php_mysql/css_dynamic_compressor';
 		$this->_comment[] = ' * (c) 2010 rew <rewish.org@gmail.com>';
