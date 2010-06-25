@@ -42,7 +42,7 @@ class CSS_DynamicCompressor
 			// @TODO others
 		);
 
-	protected function __construct() {}
+	public function __construct() {}
 
 	public static function getInstance()
 	{
