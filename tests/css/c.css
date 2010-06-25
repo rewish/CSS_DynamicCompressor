@@ -1,0 +1,10 @@
+@charset "UTF-8";
+
+/**
+ * Comment
+ */
+.File_C body {
+	background: url(/image.png);
+	background: url(" { , { ;}");
+	background: url(' { , { ;}');
+}

@@ -1,0 +1,14 @@
+@charset "UTF-8";
+
+/**
+ * Comment
+ */
+.File_A body {
+	width: 100px;
+	margin: 0 auto;
+}
+
+.File_A div {
+/*	width: 100px; */
+	margin: 0 auto;
+}
