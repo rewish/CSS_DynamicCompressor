@@ -137,10 +137,12 @@ class CSS_DynamicCompressorTest extends PHPUnit_Framework_TestCase
 		touch($directory . $this->cache, $time);
 
 		foreach ($this->cssFiles as $file) {
+			$mtime = filemtime($directory . $file);
 			touch($directory . $file, $time + 1);
 			$this->assertTrue($this->object->isModified());
 			touch($directory . $file, $time - 1);
 			$this->assertFalse($this->object->isModified());
+			touch($directory . $file, $mtime);
 		}
 
 		array_pop($this->cssFiles);
