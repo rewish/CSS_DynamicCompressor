@@ -4,7 +4,7 @@
  *
  * PHP versions 5
  *
- * @version      0.2
+ * @version      0.3
  * @author       rew <rewish.org@gmail.com>
  * @copyright    (c) 2010 rewish
  * @link         http://rewish.org/php_mysql/css_dynamic_compressor
@@ -12,7 +12,7 @@
  */
 class CSS_DynamicCompressor
 {
-	const VERSION = '0.2';
+	const VERSION = '0.3';
 
 	protected
 		$_directory,
@@ -39,7 +39,7 @@ class CSS_DynamicCompressor
 				'-webkit-$1$2:$3',
 				'-moz-$1$2:$3'
 			),
-			// @TODO gradient
+			// @TODO others
 		);
 
 	protected function __construct() {}
@@ -108,31 +108,38 @@ class CSS_DynamicCompressor
 		return $this;
 	}
 
+	public function getCSS()
+	{
+		return $this->_css;
+	}
+
 	public function display()
 	{
 		$this->compression();
-		$this->_addHeader();
+		$this->addHeader();
 		echo $this->_css;
 	}
 
 	public function compression()
 	{
-		if (!$this->_isModified()) {
+		if (!$this->isModified()) {
 			$this->_css = $this->_readFile($this->_cache);
 			return;
 		}
-		$this->_concatenation();
-		$this->_compression();
-		$this->_fixCSS3();
-		$this->_addComment();
-		$this->_addCharset();
+		$this->concatenation();
+		$this->compress();
+		if ($this->_css3Fix) {
+			$this->fixCSS3();
+		}
+		$this->addComment();
+		$this->addCharset();
 		$this->_writeFile($this->_cache, $this->_css);
 	}
 
-	protected function _concatenation()
+	public function concatenation()
 	{
 		if (empty($this->_cssFiles)) {
-			$this->_extractCSSFiles();
+			$this->extractCSSFiles();
 		}
 		foreach ($this->_cssFiles as $file) {
 			$css = $this->_readFile($file);
@@ -140,7 +147,7 @@ class CSS_DynamicCompressor
 		}
 	}
 
-	protected function _extractCSSFiles()
+	public function extractCSSFiles()
 	{
 		$target = $this->_readFile($this->_target);
 		preg_match_all('/@import\s+(url\()?["\']?([^"\';]+)/',
@@ -148,7 +155,7 @@ class CSS_DynamicCompressor
 		$this->_cssFiles = $files[2];
 	}
 
-	protected function _compression()
+	public function compress()
 	{
 		$css = preg_replace('_(/\*.*?\*/|\s{2,}|[\t\r\n]+)_s', '', $this->_css);
 		$css = str_replace(array(': ', ' :', ' {', ';}', ', '),
@@ -158,38 +165,14 @@ class CSS_DynamicCompressor
 		$this->_css = $css;
 	}
 
-	protected function _fixCSS3()
+	public function fixCSS3()
 	{
-		if (!$this->_css3Fix) return;
 		foreach ($this->_css3Fixes as $exp => $fixes) {
 			$this->_css = preg_replace($exp, implode(';', $fixes), $this->_css);
 		}
 	}
 
-	protected function _readFile($file)
-	{
-		if (!$this->_directory) {
-			$this->setDirectory();
-		}
-		if (strpos($file, 'http://') === 0 || strpos($file, 'https://') === 0) {
-			return file_get_contents($file);
-		}
-		$path = $this->_directory . $file;
-		if (!file_exists($path)) {
-			throw new Exception("'{$this->_directory}{$file}' is not found");
-		}
-		if (!is_file($path)) {
-			throw new Exception("'$path' is not file");
-		}
-		return file_get_contents($path);
-	}
-
-	protected function _writeFile($file, $data)
-	{
-		return file_put_contents($this->_directory . $file, $data, LOCK_EX);
-	}
-
-	protected function _isModified()
+	public function isModified()
 	{
 		$cachePath = realpath($this->_directory . $this->_cache);
 		if (!$cachePath || !file_exists($cachePath) || !empty($_GET['no_cache'])) {
@@ -198,7 +181,7 @@ class CSS_DynamicCompressor
 		$modified = false;
 		$this->_lastModified = filemtime($cachePath);
 		if (empty($this->_cssFiles)) {
-			$this->_extractCSSFiles();
+			$this->extractCSSFiles();
 			$this->_cssFiles[] = $this->_target;
 		}
 		foreach ($this->_cssFiles as $file) {
@@ -216,7 +199,7 @@ class CSS_DynamicCompressor
 		return $modified;
 	}
 
-	protected function _addHeader()
+	public function addHeader()
 	{
 		header('Content-Type: text/css');
 		header('Last-Modified: '. gmdate('D, d M Y H:i:s', $this->_lastModified) .' GMT');
@@ -224,18 +207,20 @@ class CSS_DynamicCompressor
 		ob_start('ob_gzhandler');
 	}
 
-	protected function _addCharset()
+	public function addCharset($charset = '')
 	{
+		if (!empty($charset)) $this->_charset = $charset;
 		$this->_css = "@charset \"$this->_charset\";\n$this->_css";
 	}
 
-	protected function _addComment()
+	public function addComment($comment = array())
 	{
-		$this->_comment[] = '/**';
+		$this->_comment = $comment;
 		if ($this->_baseUrl) {
 			$this->_addFileList();
 		}
 		$this->_addCopyright();
+		array_unshift($this->_comment, '/**');
 		$this->_comment[] = ' */';
 		$this->_comment[] = '';
 		$this->_css = implode("\n", $this->_comment) . $this->_css;
@@ -259,5 +244,28 @@ class CSS_DynamicCompressor
 		$this->_comment[] = ' * Powered by ' . __CLASS__ . ' - v' . self::VERSION;
 		$this->_comment[] = ' * http://rewish.org/php_mysql/css_dynamic_compressor';
 		$this->_comment[] = ' * (c) 2010 rew <rewish.org@gmail.com>';
+	}
+
+	protected function _readFile($file)
+	{
+		if (!$this->_directory) {
+			$this->setDirectory();
+		}
+		if (strpos($file, 'http://') === 0 || strpos($file, 'https://') === 0) {
+			return file_get_contents($file);
+		}
+		$path = $this->_directory . $file;
+		if (!file_exists($path)) {
+			throw new Exception("'{$this->_directory}{$file}' is not found");
+		}
+		if (!is_file($path)) {
+			throw new Exception("'$path' is not file");
+		}
+		return file_get_contents($path);
+	}
+
+	protected function _writeFile($file, $data)
+	{
+		return file_put_contents($this->_directory . $file, $data, LOCK_EX);
 	}
 }
