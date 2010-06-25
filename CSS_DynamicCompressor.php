@@ -150,7 +150,7 @@ class CSS_DynamicCompressor
 	public function extractCSSFiles()
 	{
 		$target = $this->_readFile($this->_target);
-		preg_match_all('/@import\s+(url\()?["\']?([^"\';]+)/',
+		preg_match_all('/@import\s+(url\()?["\']?([^"\'\);]+)/',
 			$target, $files, PREG_PATTERN_ORDER);
 		$this->_cssFiles = $files[2];
 	}
