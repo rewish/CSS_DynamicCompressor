@@ -134,6 +134,7 @@ class CSS_DynamicCompressor
 		$this->addComment();
 		$this->addCharset();
 		$this->_writeFile($this->_cache, $this->_css);
+		return $this;
 	}
 
 	public function concatenation()
@@ -145,6 +146,7 @@ class CSS_DynamicCompressor
 			$css = $this->_readFile($file);
 			$this->_css.= preg_replace('/@charset.+/', '', $css);
 		}
+		return $this;
 	}
 
 	public function extractCSSFiles()
@@ -153,6 +155,7 @@ class CSS_DynamicCompressor
 		preg_match_all('/@import\s+(url\()?["\']?([^"\'\);]+)/',
 			$target, $files, PREG_PATTERN_ORDER);
 		$this->_cssFiles = $files[2];
+		return $this;
 	}
 
 	public function compress()
@@ -163,6 +166,7 @@ class CSS_DynamicCompressor
 		                   trim($css));
 		$css = preg_replace('/[^\}]+?\{\}/', '', $css);
 		$this->_css = $css;
+		return $this;
 	}
 
 	public function fixCSS3()
@@ -170,6 +174,7 @@ class CSS_DynamicCompressor
 		foreach ($this->_css3Fixes as $exp => $fixes) {
 			$this->_css = preg_replace($exp, implode(';', $fixes), $this->_css);
 		}
+		return $this;
 	}
 
 	public function isModified()
@@ -205,12 +210,14 @@ class CSS_DynamicCompressor
 		header('Last-Modified: '. gmdate('D, d M Y H:i:s', $this->_lastModified) .' GMT');
 		header('Expires: '. gmdate('D, d M Y H:i:s', strtotime("+{$this->_expireDay} day")) .' GMT');
 		ob_start('ob_gzhandler');
+		return $this;
 	}
 
 	public function addCharset($charset = '')
 	{
 		if (!empty($charset)) $this->_charset = $charset;
 		$this->_css = "@charset \"$this->_charset\";\n$this->_css";
+		return $this;
 	}
 
 	public function addComment($comment = array())
@@ -224,6 +231,7 @@ class CSS_DynamicCompressor
 		$this->_comment[] = ' */';
 		$this->_comment[] = '';
 		$this->_css = implode("\n", $this->_comment) . $this->_css;
+		return $this;
 	}
 
 	protected function _addFileList()
