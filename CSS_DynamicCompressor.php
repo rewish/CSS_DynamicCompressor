@@ -187,8 +187,8 @@ class CSS_DynamicCompressor
 		$this->_lastModified = filemtime($cachePath);
 		if (empty($this->_cssFiles)) {
 			$this->extractCSSFiles();
-			$this->_cssFiles[] = $this->_target;
 		}
+		$this->_cssFiles[] = $this->_target;
 		foreach ($this->_cssFiles as $file) {
 			$filePath = $this->_directory . $file;
 			if (!file_exists($filePath)) {
