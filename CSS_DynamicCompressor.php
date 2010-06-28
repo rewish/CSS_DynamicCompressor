@@ -160,6 +160,9 @@ class CSS_DynamicCompressor
 
 	public function compress()
 	{
+		if (!$this->_css) {
+			throw new Exception;
+		}
 		$css = preg_replace('_(/\*.*?\*/|\s{2,}|[\t\r\n]+)_s', '', $this->_css);
 		$css = str_replace(array(': ', ' :', ' {', ';}', ', '),
 		                   array(':' , ':' , '{' , '}' , ','),
@@ -171,6 +174,9 @@ class CSS_DynamicCompressor
 
 	public function fixCSS3()
 	{
+		if (!$this->_css) {
+			throw new Exception;
+		}
 		foreach ($this->_css3Fixes as $exp => $fixes) {
 			$this->_css = preg_replace($exp, implode(';', $fixes), $this->_css);
 		}
@@ -220,7 +226,7 @@ class CSS_DynamicCompressor
 		return $this;
 	}
 
-	public function addComment($comment = array())
+	public function addComment(Array $comment = array())
 	{
 		$this->_comment = $comment;
 		if ($this->_baseUrl) {
