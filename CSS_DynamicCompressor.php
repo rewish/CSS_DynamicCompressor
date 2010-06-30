@@ -125,7 +125,7 @@ class CSS_DynamicCompressor
 
 	public function compression()
 	{
-		if (false && !$this->isModified()) {
+		if (!$this->isModified()) {
 			$this->_css = $this->_readFile($this->_cache);
 			return $this;
 		}
