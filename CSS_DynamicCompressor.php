@@ -14,8 +14,8 @@ class CSS_DynamicCompressor
 {
 	const
 		VERSION = '0.3',
-		STRING_DOUBLE = '%CSSDC_STRING_D%',
-		STRING_SINGLE = '%CSSDC_STRING_S%';
+		STRING_DOUBLE = '%CSSDC_STRING_DOUBLE%',
+		STRING_SINGLE = '%CSSDC_STRING_SINGLE%';
 
 	protected
 		$_directory,
