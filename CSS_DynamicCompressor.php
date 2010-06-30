@@ -124,7 +124,7 @@ class CSS_DynamicCompressor
 	{
 		if (!$this->isModified()) {
 			$this->_css = $this->_readFile($this->_cache);
-			return;
+			return $this;
 		}
 		$this->concatenation();
 		$this->compress();
