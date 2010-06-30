@@ -4,7 +4,7 @@
  *
  * PHP versions 5
  *
- * @version      0.3
+ * @version      0.4
  * @author       rew <rewish.org@gmail.com>
  * @copyright    (c) 2010 rewish
  * @link         http://rewish.org/php_mysql/css_dynamic_compressor
@@ -13,7 +13,7 @@
 class CSS_DynamicCompressor
 {
 	const
-		VERSION = '0.3',
+		VERSION = '0.4',
 		STRING_DOUBLE = '%CSSDC_STRING_DOUBLE%',
 		STRING_SINGLE = '%CSSDC_STRING_SINGLE%';
 
