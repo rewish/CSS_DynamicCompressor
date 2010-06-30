@@ -12,7 +12,10 @@
  */
 class CSS_DynamicCompressor
 {
-	const VERSION = '0.3';
+	const
+		VERSION = '0.3',
+		STRING_DOUBLE = '%CSSDC_STRING_D%',
+		STRING_SINGLE = '%CSSDC_STRING_S%';
 
 	protected
 		$_directory,
@@ -122,7 +125,7 @@ class CSS_DynamicCompressor
 
 	public function compression()
 	{
-		if (!$this->isModified()) {
+		if (false && !$this->isModified()) {
 			$this->_css = $this->_readFile($this->_cache);
 			return $this;
 		}
@@ -163,12 +166,29 @@ class CSS_DynamicCompressor
 		if (!$this->_css) {
 			throw new Exception;
 		}
-		$css = preg_replace('_(/\*.*?\*/|\s{2,}|[\t\r\n]+)_s', '', $this->_css);
-		$css = str_replace(array(': ', ' :', ' {', ';}', ', '),
+		// Double quotation
+		preg_match_all('/"([^"]+)"/s', $this->_css, $d);
+		$this->_css = preg_replace(
+			'/(")[^"]+"/s', '$1'. self::STRING_DOUBLE .'$1', $this->_css);
+		// Single quotation
+		preg_match_all('/\'([^\']+)\'/s', $this->_css, $s);
+		$this->_css = preg_replace(
+			'/(\')[^\']+\'/s', '$1'. self::STRING_SINGLE .'$1', $this->_css);
+
+		// Compress
+		$this->_css = preg_replace('_(/\*.*?\*/|[\t\r\n]+| {2,})_s', '', $this->_css);
+		$this->_css = str_replace(array(': ', ' :', ' {', ';}', ', '),
 		                   array(':' , ':' , '{' , '}' , ','),
-		                   trim($css));
-		$css = preg_replace('/[^\}]+?\{\}/', '', $css);
-		$this->_css = $css;
+		                   trim($this->_css));
+		$this->_css = preg_replace('/[^\}]+?\{\}/', '', $this->_css);
+
+		// Double quotation
+		$this->_css = str_replace(
+			array_fill(0, count($d[1]), self::STRING_DOUBLE), $d[1], $this->_css);
+		// Single quotation
+		$this->_css = str_replace(
+			array_fill(0, count($s[1]), self::STRING_SINGLE), $s[1], $this->_css);
+
 		return $this;
 	}
 

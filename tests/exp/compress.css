@@ -1,1 +1,1 @@
-.File_A body{width:100px;margin:0 auto}.File_A div{margin:0 auto}.File_B{border-radius:9px}.File_C body{background:url(/image.png);background:url("{ ,{ }");background:url('{ ,{ }')}.File_D body{margin:0 auto}.File_E body{margin:0 auto}
+.File_A body{width:100px;margin:0 auto}.File_A div{margin:0 auto}.File_B{border-radius:9px}.File_C body{background:url(/image.png);background:url(" { , { ;}");background:url(' { , { ;}')}.File_D body{margin:0 auto}.File_E body{margin:0 auto}

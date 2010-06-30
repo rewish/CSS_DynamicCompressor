@@ -11,10 +11,9 @@ class CSS_DynamicCompressorTest extends PHPUnit_Framework_TestCase
 		$cache = 'cache.css';
 
 	public function setUp() {
-		$this->expDirectory = dirname(__FILE__) . '/exp';
-		$cssDirectory = dirname(__FILE__) . '/css';
 		$this->object = new CSS_DynamicCompressor_Extended;
-		$this->object->setDirectory($cssDirectory);
+		$this->object->setDirectory(dirname(__FILE__) . '/css');
+		$this->expDirectory = dirname(__FILE__) . '/exp';
 	}
 
 	public function tearDown() {
