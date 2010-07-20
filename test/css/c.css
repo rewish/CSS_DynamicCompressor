@@ -8,3 +8,11 @@
 	background: url(" { , { ;}");
 	background: url(' { , { ;}');
 }
+
+q:before {
+	content: '';
+}
+
+q:after {
+	content: "";
+}

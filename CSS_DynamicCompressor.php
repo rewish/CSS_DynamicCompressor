@@ -4,7 +4,7 @@
  *
  * PHP versions 5
  *
- * @version      0.4
+ * @version      0.4.1
  * @author       rew <rewish.org@gmail.com>
  * @copyright    (c) 2010 rewish
  * @link         http://rewish.org/php_mysql/css_dynamic_compressor
@@ -13,9 +13,9 @@
 class CSS_DynamicCompressor
 {
 	const
-		VERSION = '0.4',
-		STRING_DOUBLE = '%CSSDC_STRING_DOUBLE%',
-		STRING_SINGLE = '%CSSDC_STRING_SINGLE%';
+		VERSION = '0.4.1',
+		STRING_DOUBLE = '__CSSDC_STRING_DOUBLE__',
+		STRING_SINGLE = '__CSSDC_STRING_SINGLE__';
 
 	protected
 		$_directory,
@@ -167,13 +167,13 @@ class CSS_DynamicCompressor
 			throw new Exception;
 		}
 		// Double quotation
-		preg_match_all('/"([^"]+)"/s', $this->_css, $d);
-		$this->_css = preg_replace(
-			'/(")[^"]+"/s', '$1'. self::STRING_DOUBLE .'$1', $this->_css);
+		$pattern = '/("[^"]*")/s';
+		preg_match_all($pattern, $this->_css, $stringDouble);
+		$this->_css = preg_replace($pattern, self::STRING_DOUBLE, $this->_css);
 		// Single quotation
-		preg_match_all('/\'([^\']+)\'/s', $this->_css, $s);
-		$this->_css = preg_replace(
-			'/(\')[^\']+\'/s', '$1'. self::STRING_SINGLE .'$1', $this->_css);
+		$pattern = '/(\'[^\']*\')/s';
+		preg_match_all($pattern, $this->_css, $stringSingle);
+		$this->_css = preg_replace($pattern, self::STRING_SINGLE, $this->_css);
 
 		// Compress
 		$this->_css = preg_replace('_(/\*.*?\*/|[\t\r\n]+| {2,})_s', '', $this->_css);
@@ -183,11 +183,13 @@ class CSS_DynamicCompressor
 		$this->_css = preg_replace('/[^\}]+?\{\}/', '', $this->_css);
 
 		// Double quotation
-		$this->_css = str_replace(
-			array_fill(0, count($d[1]), self::STRING_DOUBLE), $d[1], $this->_css);
+		foreach ($stringDouble[1] as $str) {
+			$this->_css = preg_replace('/'. self::STRING_DOUBLE .'/', $str, $this->_css, 1);
+		}
 		// Single quotation
-		$this->_css = str_replace(
-			array_fill(0, count($s[1]), self::STRING_SINGLE), $s[1], $this->_css);
+		foreach ($stringSingle[1] as $str) {
+			$this->_css = preg_replace('/'. self::STRING_SINGLE .'/', $str, $this->_css, 1);
+		}
 
 		return $this;
 	}
