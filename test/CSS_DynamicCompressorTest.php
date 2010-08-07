@@ -66,6 +66,14 @@ class CSS_DynamicCompressorTest extends PHPUnit_Framework_TestCase
 		$url = 'http://localhost/css';
 		$this->assertEquals($this->object->setBaseUrl($url), $this->object);
 		$this->assertEquals($this->object->_baseUrl, "$url/");
+
+		$url = 'localhost/css';
+		$this->assertEquals($this->object->setBaseUrl($url), $this->object);
+		$this->assertEquals($this->object->_baseUrl, "http://$url/");
+
+		$_SERVER['HTTPS'] = true;
+		$this->assertEquals($this->object->setBaseUrl($url), $this->object);
+		$this->assertEquals($this->object->_baseUrl, "https://$url/");
 	}
 
 	public function testSetCSS3Fix() {
@@ -76,16 +84,6 @@ class CSS_DynamicCompressorTest extends PHPUnit_Framework_TestCase
 
 	public function testGetCSS() {
 		$this->assertEquals($this->object->_css, $this->object->getCSS());
-	}
-
-	/**
-	 * @todo Implement testDisplay().
-	 */
-	public function testDisplay() {
-		// Remove the following lines when you implement this test.
-		$this->markTestIncomplete(
-				'This test has not been implemented yet.'
-		);
 	}
 
 	/**

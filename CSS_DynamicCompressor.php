@@ -96,7 +96,7 @@ class CSS_DynamicCompressor
 		if (!$url) {
 			$url = $_SERVER['HTTP_HOST'] . dirname($_SERVER['REQUEST_URI']);
 		}
-		if (strpos($url, 'http') === false) {
+		if (strpos($url, 'http://') === false) {
 			$scheme = !empty($_SERVER['HTTPS']) ? 'https://' : 'http://';
 			$url = "{$scheme}{$url}";
 		}
@@ -115,6 +115,14 @@ class CSS_DynamicCompressor
 		return $this->_css;
 	}
 
+	public function getLastModified()
+	{
+		if (!$this->_lastModified) {
+			$this->isModified();
+		}
+		return $this->_lastModified;
+	}
+
 	public function display()
 	{
 		$this->compression();
@@ -124,7 +132,7 @@ class CSS_DynamicCompressor
 
 	public function compression()
 	{
-		if (false && !$this->isModified()) {
+		if (!$this->isModified()) {
 			$this->_css = $this->_readFile($this->_cache);
 			return $this;
 		}
