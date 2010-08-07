@@ -4,7 +4,7 @@
  *
  * PHP versions 5
  *
- * @version      0.4.1
+ * @version      0.4.2
  * @author       rew <rewish.org@gmail.com>
  * @copyright    (c) 2010 rewish
  * @link         http://rewish.org/php_mysql/css_dynamic_compressor
@@ -13,7 +13,7 @@
 class CSS_DynamicCompressor
 {
 	const
-		VERSION = '0.4.1',
+		VERSION = '0.4.2',
 		STRING_DOUBLE = '__CSSDC_STRING_DOUBLE__',
 		STRING_SINGLE = '__CSSDC_STRING_SINGLE__';
 
@@ -41,8 +41,7 @@ class CSS_DynamicCompressor
 				'$1$2:$3',
 				'-webkit-$1$2:$3',
 				'-moz-$1$2:$3'
-			),
-			// @TODO others
+			)
 		);
 
 	public function __construct() {}
@@ -125,7 +124,7 @@ class CSS_DynamicCompressor
 
 	public function compression()
 	{
-		if (!$this->isModified()) {
+		if (false && !$this->isModified()) {
 			$this->_css = $this->_readFile($this->_cache);
 			return $this;
 		}
@@ -166,20 +165,24 @@ class CSS_DynamicCompressor
 		if (!$this->_css) {
 			throw new Exception;
 		}
+
+		// Comment
+		$this->_css = preg_replace('_/\*.*?\*/_s', '', $this->_css);
+
 		// Double quotation
-		$pattern = '/("[^"]*")/s';
+		$pattern = '/("[^"]*?")/s';
 		preg_match_all($pattern, $this->_css, $stringDouble);
 		$this->_css = preg_replace($pattern, self::STRING_DOUBLE, $this->_css);
 		// Single quotation
-		$pattern = '/(\'[^\']*\')/s';
+		$pattern = '/(\'[^\']*?\')/s';
 		preg_match_all($pattern, $this->_css, $stringSingle);
 		$this->_css = preg_replace($pattern, self::STRING_SINGLE, $this->_css);
 
 		// Compress
-		$this->_css = preg_replace('_(/\*.*?\*/|[\t\r\n]+| {2,})_s', '', $this->_css);
+		$this->_css = preg_replace('_([\t\r\n]+| {2,})_s', '', $this->_css);
 		$this->_css = str_replace(array(': ', ' :', ' {', ';}', ', '),
-		                   array(':' , ':' , '{' , '}' , ','),
-		                   trim($this->_css));
+		                          array(':' , ':' , '{' , '}' , ','),
+		                          trim($this->_css));
 		$this->_css = preg_replace('/[^\}]+?\{\}/', '', $this->_css);
 
 		// Double quotation
