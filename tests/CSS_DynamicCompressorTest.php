@@ -1,6 +1,6 @@
 <?php
 require_once 'PHPUnit/Framework.php';
-require_once dirname(dirname(__FILE__)) . '/CSS_DynamicCompressor.php';
+require_once dirname(dirname(__FILE__)) . '/src/CSS_DynamicCompressor.php';
 
 class CSS_DynamicCompressorTest extends PHPUnit_Framework_TestCase
 {
@@ -11,7 +11,7 @@ class CSS_DynamicCompressorTest extends PHPUnit_Framework_TestCase
 		$cache = 'cache.css';
 
 	public function setUp() {
-		$this->object = new CSS_DynamicCompressor_Extended;
+		$this->object = new CSS_DynamicCompressor_Mock;
 		$this->object->setDirectory(dirname(__FILE__) . '/css');
 		$this->expDirectory = dirname(__FILE__) . '/exp';
 	}
@@ -20,7 +20,7 @@ class CSS_DynamicCompressorTest extends PHPUnit_Framework_TestCase
 	}
 
 	public function testGetInstance() {
-		$this->assertType('object', CSS_DynamicCompressor_Extended::getInstance());
+		$this->assertType('object', CSS_DynamicCompressor_Mock::getInstance());
 	}
 
 	public function testSetCharset() {
@@ -126,6 +126,10 @@ class CSS_DynamicCompressorTest extends PHPUnit_Framework_TestCase
 	}
 
 	public function testIsModified() {
+		$this->object->_debug = true;
+		$this->assertTrue($this->object->isModified());
+		$this->object->_debug = false;
+
 		$this->object->setCache($this->cache);
 		$directory = $this->object->_directory;
 		$this->cssFiles[] = $this->object->_target;
@@ -154,38 +158,34 @@ class CSS_DynamicCompressorTest extends PHPUnit_Framework_TestCase
 	 * @todo Implement testAddHeader().
 	 */
 	public function testAddHeader() {
-		// Remove the following lines when you implement this test.
-		$this->markTestIncomplete(
-				'This test has not been implemented yet.'
-		);
+		$this->markTestIncomplete();
 	}
 
 	/**
 	 * @todo Implement testAddCharset().
 	 */
 	public function testAddCharset() {
-		// Remove the following lines when you implement this test.
-		$this->markTestIncomplete(
-				'This test has not been implemented yet.'
-		);
+		$this->markTestIncomplete();
 	}
 
 	/**
 	 * @todo Implement testAddComment().
 	 */
 	public function testAddComment() {
-		// Remove the following lines when you implement this test.
-		$this->markTestIncomplete(
-				'This test has not been implemented yet.'
-		);
+		$this->markTestIncomplete();
 	}
 }
 
-class CSS_DynamicCompressor_Extended extends CSS_DynamicCompressor
+class CSS_DynamicCompressor_Mock extends CSS_DynamicCompressor
 {
 	public function __get($name)
 	{
 		return $this->{$name};
+	}
+
+	public function __set($name, $value)
+	{
+		$this->{$name} = $value;
 	}
 
 	public function _readFile($file)

@@ -4,45 +4,44 @@
  *
  * PHP versions 5
  *
- * @version      0.4.2
- * @author       rew <rewish.org@gmail.com>
- * @copyright    (c) 2010 rewish
+ * @version      0.4.3
+ * @author       Hiroshi Hoaki <rewish.org@gmail.com>
+ * @copyright    (c) 2010-2011 rewish
  * @link         http://rewish.org/php_mysql/css_dynamic_compressor
  * @license      http://rewish.org/license/mit The MIT License
  */
 class CSS_DynamicCompressor
 {
-	const
-		VERSION = '0.4.2',
-		STRING_DOUBLE = '__CSSDC_STRING_DOUBLE__',
-		STRING_SINGLE = '__CSSDC_STRING_SINGLE__';
+	const VERSION = '0.4.3';
+	const STRING_DOUBLE = '__CSSDC_STRING_DOUBLE__';
+	const STRING_SINGLE = '__CSSDC_STRING_SINGLE__';
 
-	protected
-		$_directory,
-		$_cssFiles,
-		$_css,
-		$_lastModified,
-		$_comment = array(),
-		$_baseUrl = null,
-		$_charset = 'UTF-8',
-		$_target = 'import.css',
-		$_cache = '_cache.css',
-		$_expireDay = 30,
-		$_css3Fix = false,
-		$_css3Fixes = array(
-			// border-radius
-			'/border-([a-z]+)?(-)?([a-z]+)?(-)?radius:([^;\}]+)/' => array(
-				'border-$1$2$3$4radius:$5',
-				'-webkit-border-$1$2$3$4radius:$5',
-				'-moz-border-radius$2$1$3:$5'
-			),
-			// other properties
-			'/(transform|box-|border-image|column-)([\-a-z]+)?:([^;\}]+)/' => array(
-				'$1$2:$3',
-				'-webkit-$1$2:$3',
-				'-moz-$1$2:$3'
-			)
-		);
+	protected $_debug = false;
+	protected $_directory;
+	protected $_cssFiles;
+	protected $_css;
+	protected $_lastModified;
+	protected $_comment = array();
+	protected $_baseUrl = null;
+	protected $_charset = 'UTF-8';
+	protected $_target = 'import.css';
+	protected $_cache = '_cache.css';
+	protected $_expireDay = 30;
+	protected $_css3Fix = false;
+	protected $_css3Fixes = array(
+		// border-radius
+		'/border-([a-z]+)?(-)?([a-z]+)?(-)?radius:([^;\}]+)/' => array(
+			'border-$1$2$3$4radius:$5',
+			'-webkit-border-$1$2$3$4radius:$5',
+			'-moz-border-radius$2$1$3:$5'
+		),
+		// other properties
+		'/(transform|box-|border-image|column-)([\-a-z]+)?:([^;\}]+)/' => array(
+			'$1$2:$3',
+			'-webkit-$1$2:$3',
+			'-moz-$1$2:$3'
+		)
+	);
 
 	public function __construct() {}
 
@@ -50,6 +49,12 @@ class CSS_DynamicCompressor
 	{
 		static $obj = null;
 		return $obj ? $obj : $obj = new self;
+	}
+
+	public function setDebug($debug)
+	{
+		$this->_debug = $debug;
+		return $this;
 	}
 
 	public function setCharset($charset)
@@ -218,6 +223,9 @@ class CSS_DynamicCompressor
 
 	public function isModified()
 	{
+		if ($this->_debug) {
+			return true;
+		}
 		$cachePath = realpath($this->_directory . $this->_cache);
 		if (!$cachePath || !file_exists($cachePath) || !empty($_GET['no_cache'])) {
 			return true;
@@ -288,9 +296,9 @@ class CSS_DynamicCompressor
 
 	protected function _addCopyright()
 	{
-		$this->_comment[] = ' * Powered by ' . __CLASS__ . ' - v' . self::VERSION;
+		$this->_comment[] = ' * Powered by '. __CLASS__ .' - v'. self::VERSION;
 		$this->_comment[] = ' * http://rewish.org/php_mysql/css_dynamic_compressor';
-		$this->_comment[] = ' * (c) 2010 rew <rewish.org@gmail.com>';
+		$this->_comment[] = ' * (c) 2010-'. date('Y') .' Hiroshi Hoaki <rewish.org@gmail.com>';
 	}
 
 	protected function _readFile($file)
@@ -303,7 +311,7 @@ class CSS_DynamicCompressor
 		}
 		$path = $this->_directory . $file;
 		if (!file_exists($path)) {
-			throw new Exception("'{$this->_directory}{$file}' is not found");
+			throw new Exception("'{$this->_directory}{$file}' is not exists");
 		}
 		if (!is_file($path)) {
 			throw new Exception("'$path' is not file");
