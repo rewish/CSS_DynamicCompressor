@@ -83,9 +83,13 @@ class CSS_DynamicCompressor
 
 	public function setDirectory($directory = null)
 	{
-		if (!$directory) $directory = getcwd();
+		if (!$directory) {
+			$directory = getcwd();
+		}
 		$this->_directory = realpath($directory);
-		if (!$this->_directory) throw new Exception;
+		if (!$this->_directory) {
+			throw new Exception;
+		}
 		$this->_directory .= DIRECTORY_SEPARATOR;
 		return $this;
 	}
