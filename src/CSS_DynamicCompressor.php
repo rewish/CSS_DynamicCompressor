@@ -4,7 +4,7 @@
  *
  * PHP versions 5
  *
- * @version      0.4.4
+ * @version      0.4.3
  * @author       Hiroshi Hoaki <rewish.org@gmail.com>
  * @copyright    (c) 2010-2011 rewish
  * @link         http://rewish.org/php_mysql/css_dynamic_compressor
@@ -12,7 +12,7 @@
  */
 class CSS_DynamicCompressor
 {
-	const VERSION = '0.4.4';
+	const VERSION = '0.4.3';
 	const STRING_DOUBLE = '__CSSDC_STRING_DOUBLE__';
 	const STRING_SINGLE = '__CSSDC_STRING_SINGLE__';
 
@@ -22,6 +22,10 @@ class CSS_DynamicCompressor
 	protected $_css;
 	protected $_lastModified;
 	protected $_comment = array();
+	protected $_commentOptions = array(
+		'file_list' => true,
+		'copyright' => true
+	);
 	protected $_baseUrl = null;
 	protected $_charset = 'UTF-8';
 	protected $_target = 'import.css';
@@ -102,6 +106,12 @@ class CSS_DynamicCompressor
 			}
 		}
 		$this->_cssFiles = $cssFiles;
+		return $this;
+	}
+
+	public function setCommentOptions(Array $options = array())
+	{
+		$this->_commentOptions = $options + $this->_commentOptions;
 		return $this;
 	}
 
@@ -279,10 +289,15 @@ class CSS_DynamicCompressor
 	public function addComment(Array $comment = array())
 	{
 		$this->_comment = $comment;
-		if ($this->_baseUrl) {
+		if ($this->_commentOptions['file_list']) {
 			$this->_addFileList();
 		}
-		$this->_addCopyright();
+		if ($this->_commentOptions['copyright']) {
+			$this->_addCopyright();
+		}
+		if (empty($this->_comment)) {
+			return $this;
+		}
 		array_unshift($this->_comment, '/**');
 		$this->_comment[] = ' */';
 		$this->_comment[] = '';
@@ -292,6 +307,9 @@ class CSS_DynamicCompressor
 
 	protected function _addFileList()
 	{
+		if (!$this->_baseUrl) {
+			$this->setBaseUrl();
+		}
 		$this->_comment[] = ' * [File list]';
 		foreach ($this->_cssFiles as $file) {
 			if (strpos($file, 'http://') === 0 || strpos($file, 'https://') === 0) {

@@ -62,6 +62,16 @@ class CSS_DynamicCompressorTest extends PHPUnit_Framework_TestCase
 		$this->assertEquals($this->object->_cssFiles, $files);
 	}
 
+	public function testSetCommentOptions()
+	{
+		$options = array(
+			'file_list' => false,
+			'copyright' => false
+		);
+		$this->object->setCommentOptions($options);
+		$this->assertSame($options, $this->object->_commentOptions);
+	}
+
 	public function testSetBaseUrl() {
 		$url = 'http://localhost/css';
 		$this->assertEquals($this->object->setBaseUrl($url), $this->object);
