@@ -2,7 +2,7 @@
 /**
  * CSS_DynamicCompressor
  *
- * PHP versions 5
+ * PHP versions >= 5.2
  *
  * @version      0.4.4
  * @author       Hiroshi Hoaki <rewish.org@gmail.com>
@@ -12,26 +12,106 @@
  */
 class CSS_DynamicCompressor
 {
+	/**
+	 * Version
+	 */
 	const VERSION = '0.4.4';
+
+	/**
+	 * String "TARGET"
+	 */
 	const STRING_DOUBLE = '__CSSDC_STRING_DOUBLE__';
+
+	/**
+	 * String 'TARGET'
+	 */
 	const STRING_SINGLE = '__CSSDC_STRING_SINGLE__';
 
+	/**
+	 * Debug flag
+	 * @var boolean
+	 */
 	protected $_debug = false;
+
+	/**
+	 * Base directory
+	 * @var string
+	 */
 	protected $_directory;
+
+	/**
+	 * CSS files
+	 * @var array
+	 */
 	protected $_cssFiles;
+
+	/**
+	 * CSS content
+	 * @var string
+	 */
 	protected $_css;
+
+	/**
+	 * Last modified time
+	 * @var integer
+	 */
 	protected $_lastModified;
+
+	/**
+	 * Comment
+	 * @var array
+	 */
 	protected $_comment = array();
+
+	/**
+	 * Comment options
+	 * @var array
+	 */
 	protected $_commentOptions = array(
 		'file_list' => true,
 		'copyright' => true
 	);
+
+	/**
+	 * Base URL
+	 * @var string
+	 */
 	protected $_baseUrl = null;
+
+	/**
+	 * Charset
+	 * @var string
+	 */
 	protected $_charset = 'UTF-8';
+
+	/**
+	 * Target file name
+	 * @var string
+	 */
 	protected $_target = 'import.css';
+
+	/**
+	 * Cache file name
+	 * @var string
+	 */
 	protected $_cache = '_cache.css';
-	protected $_expireDay = 30;
+
+	/**
+	 * Expires day
+	 * @var integer
+	 */
+	protected $_expiresDay = 30;
+
+	/**
+	 * Fix CSS3 vendor prefixes
+	 * @var boolean
+	 */
 	protected $_css3Fix = false;
+
+	/**
+	 * Fix CSS3 rules
+	 * @var array
+	 */
 	protected $_css3Fixes = array(
 		// border-radius
 		'/border-([a-z]+)?(-)?([a-z]+)?(-)?radius:([^;\}]+)/' => array(
@@ -47,44 +127,91 @@ class CSS_DynamicCompressor
 		)
 	);
 
-	public function __construct() {}
+	/**
+	 * Constructor
+	 */
+	public function __construct()
+	{
+	}
 
+	/**
+	 * Get instance
+	 *
+	 * @staticvar object $obj
+	 * @return CSS_DynamicCompressor
+	 */
 	public static function getInstance()
 	{
 		static $obj = null;
 		return $obj ? $obj : $obj = new self;
 	}
 
+	/**
+	 * Set debug flag
+	 *
+	 * @param boolean $debug
+	 * @return CSS_DynamicCompressor
+	 */
 	public function setDebug($debug)
 	{
 		$this->_debug = $debug;
 		return $this;
 	}
 
+	/**
+	 * Set charset
+	 *
+	 * @param string $charset
+	 * @return CSS_DynamicCompressor
+	 */
 	public function setCharset($charset)
 	{
 		$this->_charset = $charset;
 		return $this;
 	}
 
+	/**
+	 * Set target file name
+	 *
+	 * @param string $target
+	 * @return CSS_DynamicCompressor
+	 */
 	public function setTarget($target)
 	{
 		$this->_target = $target;
 		return $this;
 	}
 
+	/**
+	 * Set cache file name
+	 *
+	 * @param string $cache
+	 * @return CSS_DynamicCompressor
+	 */
 	public function setCache($cache)
 	{
 		$this->_cache = $cache;
 		return $this;
 	}
 
-	public function setExpireDay($expireDay)
+	/**
+	 * Set expires day
+	 *
+	 * @param integer $day
+	 * @return CSS_DynamicCompressor
+	 */
+	public function setExpiresDay($day)
 	{
-		$this->_expireDay = $expireDay;
+		$this->_expiresDay = $day;
 		return $this;
 	}
 
+	/**
+	 * Set base directory
+	 *
+	 * @param string $directory
+	 * @return CSS_DynamicCompressor
+	 */
 	public function setDirectory($directory = null)
 	{
 		if (!$directory) {
@@ -98,6 +225,12 @@ class CSS_DynamicCompressor
 		return $this;
 	}
 
+	/**
+	 * Set CSS files
+	 *
+	 * @param array $cssFiles
+	 * @return CSS_DynamicCompressor
+	 */
 	public function setCSSFiles(Array $cssFiles = array())
 	{
 		foreach ($cssFiles as &$file) {
@@ -109,12 +242,31 @@ class CSS_DynamicCompressor
 		return $this;
 	}
 
+	/**
+	 * Set comment options
+	 *
+	 * Usage:
+	 * CSS_DynamicCompressor::getInstance()
+	 *   ->setCommentOptions(array(
+	 *     'file_list' => false,
+	 *     'copyright' => false
+	 *   ))
+	 *
+	 * @param array $options
+	 * @return CSS_DynamicCompressor
+	 */
 	public function setCommentOptions(Array $options = array())
 	{
 		$this->_commentOptions = $options + $this->_commentOptions;
 		return $this;
 	}
 
+	/**
+	 * Set base URL
+	 *
+	 * @param string $url
+	 * @return CSS_DynamicCompressor
+	 */
 	public function setBaseUrl($url = null)
 	{
 		if (!$url) {
@@ -128,17 +280,33 @@ class CSS_DynamicCompressor
 		return $this;
 	}
 
+	/**
+	 * Set fix CSS3 vendor prefix
+	 *
+	 * @param boolean $use
+	 * @return CSS_DynamicCompressor
+	 */
 	public function setCSS3Fix($use)
 	{
 		$this->_css3Fix = $use;
 		return $this;
 	}
 
+	/**
+	 * Get CSS content
+	 *
+	 * @return string
+	 */
 	public function getCSS()
 	{
 		return $this->_css;
 	}
 
+	/**
+	 * Get last modified time
+	 *
+	 * @return integer
+	 */
 	public function getLastModified()
 	{
 		if (!$this->_lastModified) {
@@ -147,6 +315,11 @@ class CSS_DynamicCompressor
 		return $this->_lastModified;
 	}
 
+	/**
+	 * Display
+	 *
+	 * @return string
+	 */
 	public function display()
 	{
 		$this->compression();
@@ -154,6 +327,11 @@ class CSS_DynamicCompressor
 		echo $this->_css;
 	}
 
+	/**
+	 * Compression
+	 *
+	 * @return CSS_DynamicCompressor
+	 */
 	public function compression()
 	{
 		if (!$this->isModified()) {
@@ -171,6 +349,11 @@ class CSS_DynamicCompressor
 		return $this;
 	}
 
+	/**
+	 * Concatenation
+	 *
+	 * @return CSS_DynamicCompressor
+	 */
 	public function concatenation()
 	{
 		if (empty($this->_cssFiles)) {
@@ -183,6 +366,11 @@ class CSS_DynamicCompressor
 		return $this;
 	}
 
+	/**
+	 * Extract CSS files
+	 *
+	 * @return CSS_DynamicCompressor
+	 */
 	public function extractCSSFiles()
 	{
 		$target = $this->_readFile($this->_target);
@@ -192,6 +380,11 @@ class CSS_DynamicCompressor
 		return $this;
 	}
 
+	/**
+	 * Compress
+	 *
+	 * @return CSS_DynamicCompressor
+	 */
 	public function compress()
 	{
 		if (!$this->_css) {
@@ -229,6 +422,11 @@ class CSS_DynamicCompressor
 		return $this;
 	}
 
+	/**
+	 * Fix CSS3 vendor prefix
+	 *
+	 * @return CSS_DynamicCompressor
+	 */
 	public function fixCSS3()
 	{
 		if (!$this->_css) {
@@ -240,6 +438,11 @@ class CSS_DynamicCompressor
 		return $this;
 	}
 
+	/**
+	 * Is modified
+	 *
+	 * @return boolean
+	 */
 	public function isModified()
 	{
 		if ($this->_debug) {
@@ -270,6 +473,11 @@ class CSS_DynamicCompressor
 		return $modified;
 	}
 
+	/**
+	 * Add header
+	 *
+	 * @return CSS_DynamicCompressor
+	 */
 	public function addHeader()
 	{
 		header('Content-Type: text/css');
@@ -279,6 +487,12 @@ class CSS_DynamicCompressor
 		return $this;
 	}
 
+	/**
+	 * Add charset
+	 *
+	 * @param string $charset
+	 * @return CSS_DynamicCompressor
+	 */
 	public function addCharset($charset = '')
 	{
 		if (!empty($charset)) $this->_charset = $charset;
@@ -286,6 +500,12 @@ class CSS_DynamicCompressor
 		return $this;
 	}
 
+	/**
+	 * Add comment
+	 *
+	 * @param array $comment
+	 * @return CSS_DynamicCompressor
+	 */
 	public function addComment(Array $comment = array())
 	{
 		$this->_comment = $comment;
@@ -305,6 +525,11 @@ class CSS_DynamicCompressor
 		return $this;
 	}
 
+	/**
+	 * Add file list
+	 *
+	 * @return void
+	 */
 	protected function _addFileList()
 	{
 		if (!$this->_baseUrl) {
@@ -321,6 +546,11 @@ class CSS_DynamicCompressor
 		$this->_comment[] = ' *';
 	}
 
+	/**
+	 * Add copyright
+	 *
+	 * @return void
+	 */
 	protected function _addCopyright()
 	{
 		$this->_comment[] = ' * Powered by '. __CLASS__ .' - v'. self::VERSION;
@@ -328,6 +558,13 @@ class CSS_DynamicCompressor
 		$this->_comment[] = ' * (c) 2010-'. date('Y') .' Hiroshi Hoaki <rewish.org@gmail.com>';
 	}
 
+	/**
+	 * Read file
+	 *
+	 * @param string $file
+	 * @return string
+	 * @throws Exception
+	 */
 	protected function _readFile($file)
 	{
 		if (!$this->_directory) {
@@ -346,6 +583,13 @@ class CSS_DynamicCompressor
 		return file_get_contents($path);
 	}
 
+	/**
+	 * Write file
+	 *
+	 * @param string $file
+	 * @param string $data
+	 * @return beelean
+	 */
 	protected function _writeFile($file, $data)
 	{
 		return file_put_contents($this->_directory . $file, $data, LOCK_EX);

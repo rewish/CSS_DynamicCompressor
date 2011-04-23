@@ -41,10 +41,10 @@ class CSS_DynamicCompressorTest extends PHPUnit_Framework_TestCase
 		$this->assertEquals($this->object->_cache, $cache);
 	}
 
-	public function testSetExpireDay() {
-		$expireDay = 9000;
-		$this->assertEquals($this->object->setExpireDay($expireDay), $this->object);
-		$this->assertEquals($this->object->_expireDay, $expireDay);
+	public function testSetExpiresDay() {
+		$expiresDay = 9000;
+		$this->assertEquals($this->object->setExpiresDay($expiresDay), $this->object);
+		$this->assertEquals($this->object->_expiresDay, $expiresDay);
 	}
 
 	public function testSetDirectory() {

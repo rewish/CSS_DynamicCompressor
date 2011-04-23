@@ -7,7 +7,7 @@ try {
 //		->setCharset('UTF-8')
 //		->setTarget('import.css')
 //		->setCache('_cache.css')
-//		->setExpireDay(30)
+//		->setExpiresDay(30)
 //		->setDirectory('/path/to/css/')
 //		->setCSSFiles(array('hoge', 'fuga', 'piyo'))
 //		->setCSS3Fix(true)
