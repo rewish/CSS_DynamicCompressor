@@ -4,7 +4,7 @@
  *
  * PHP versions 5
  *
- * @version      0.4.3
+ * @version      0.4.4
  * @author       Hiroshi Hoaki <rewish.org@gmail.com>
  * @copyright    (c) 2010-2011 rewish
  * @link         http://rewish.org/php_mysql/css_dynamic_compressor
@@ -12,7 +12,7 @@
  */
 class CSS_DynamicCompressor
 {
-	const VERSION = '0.4.3';
+	const VERSION = '0.4.4';
 	const STRING_DOUBLE = '__CSSDC_STRING_DOUBLE__';
 	const STRING_SINGLE = '__CSSDC_STRING_SINGLE__';
 
@@ -92,6 +92,11 @@ class CSS_DynamicCompressor
 
 	public function setCSSFiles(Array $cssFiles = array())
 	{
+		foreach ($cssFiles as &$file) {
+			if (substr($file, -4, 4) !== '.css') {
+				$file .= '.css';
+			}
+		}
 		$this->_cssFiles = $cssFiles;
 		return $this;
 	}
