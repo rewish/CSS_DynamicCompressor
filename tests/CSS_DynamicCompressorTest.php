@@ -54,6 +54,13 @@ class CSS_DynamicCompressorTest extends PHPUnit_Framework_TestCase
 		$directory = dirname(__FILE__);
 		$this->assertEquals($this->object->setDirectory($directory), $this->object);
 		$this->assertEquals($this->object->_directory, $directory . DIRECTORY_SEPARATOR);
+
+		try {
+			$this->object->setDirectory('./does_not_exists_directory');
+			$this->fail();
+		} catch (CSS_DynamicCompressor_Exception $e) {
+			// Passed
+		}
 	}
 
 	public function testSetCSSFiles() {
@@ -120,6 +127,13 @@ class CSS_DynamicCompressorTest extends PHPUnit_Framework_TestCase
 	}
 
 	public function testCompress() {
+		try {
+			$this->object->compress();
+			$this->fail();
+		} catch(CSS_DynamicCompressor_Exception $e) {
+			// Passed
+		}
+
 		$this->object->concatenation()->compress();
 		$this->assertEquals(
 			$this->object->_css,
@@ -128,6 +142,13 @@ class CSS_DynamicCompressorTest extends PHPUnit_Framework_TestCase
 	}
 
 	public function testFixCSS3() {
+		try {
+			$this->object->fixCSS3();
+			$this->fail();
+		} catch(CSS_DynamicCompressor_Exception $e) {
+			// Passed
+		}
+
 		$this->object->concatenation()->compress()->fixCSS3();
 		$this->assertEquals(
 			$this->object->_css,
@@ -183,6 +204,21 @@ class CSS_DynamicCompressorTest extends PHPUnit_Framework_TestCase
 	 */
 	public function testAddComment() {
 		$this->markTestIncomplete();
+	}
+
+	public function test_readFile() {
+		try {
+			$this->object->_readFile('./');
+			$this->fail();
+		} catch(CSS_DynamicCompressor_Exception $e) {
+			// Passed
+		}
+		try {
+			$this->object->_readFile('./does_not_exists');
+			$this->fail();
+		} catch(CSS_DynamicCompressor_Exception $e) {
+			// Passed
+		}
 	}
 }
 

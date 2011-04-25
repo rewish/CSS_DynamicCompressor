@@ -4,7 +4,7 @@
  *
  * PHP versions >= 5.2
  *
- * @version      0.4.4
+ * @version      0.4.5
  * @author       Hiroshi Hoaki <rewish.org@gmail.com>
  * @copyright    (c) 2010-2011 rewish
  * @link         http://rewish.org/php_mysql/css_dynamic_compressor
@@ -15,7 +15,7 @@ class CSS_DynamicCompressor
 	/**
 	 * Version
 	 */
-	const VERSION = '0.4.4';
+	const VERSION = '0.4.5';
 
 	/**
 	 * String "TARGET"
@@ -211,6 +211,7 @@ class CSS_DynamicCompressor
 	 *
 	 * @param string $directory
 	 * @return CSS_DynamicCompressor
+	 * @throws CSS_DynamicCompressor_Exception
 	 */
 	public function setDirectory($directory = null)
 	{
@@ -219,7 +220,7 @@ class CSS_DynamicCompressor
 		}
 		$this->_directory = realpath($directory);
 		if (!$this->_directory) {
-			throw new Exception;
+			throw new CSS_DynamicCompressor_Exception('Directory path is invalid');
 		}
 		$this->_directory .= DIRECTORY_SEPARATOR;
 		return $this;
@@ -384,11 +385,12 @@ class CSS_DynamicCompressor
 	 * Compress
 	 *
 	 * @return CSS_DynamicCompressor
+	 * @throws CSS_DynamicCompressor_Exception
 	 */
 	public function compress()
 	{
 		if (!$this->_css) {
-			throw new Exception;
+			throw new CSS_DynamicCompressor_Exception('$this->_css is empty');
 		}
 
 		// Comment
@@ -426,11 +428,12 @@ class CSS_DynamicCompressor
 	 * Fix CSS3 vendor prefix
 	 *
 	 * @return CSS_DynamicCompressor
+	 * @throws CSS_DynamicCompressor_Exception
 	 */
 	public function fixCSS3()
 	{
 		if (!$this->_css) {
-			throw new Exception;
+			throw new CSS_DynamicCompressor_Exception('$this->_css is empty');
 		}
 		foreach ($this->_css3Fixes as $exp => $fixes) {
 			$this->_css = preg_replace($exp, implode(';', $fixes), $this->_css);
@@ -563,7 +566,7 @@ class CSS_DynamicCompressor
 	 *
 	 * @param string $file
 	 * @return string
-	 * @throws Exception
+	 * @throws CSS_DynamicCompressor_Exception
 	 */
 	protected function _readFile($file)
 	{
@@ -575,10 +578,10 @@ class CSS_DynamicCompressor
 		}
 		$path = $this->_directory . $file;
 		if (!file_exists($path)) {
-			throw new Exception("'{$this->_directory}{$file}' is not exists");
+			throw new CSS_DynamicCompressor_Exception("'$path' does not exist");
 		}
 		if (!is_file($path)) {
-			throw new Exception("'$path' is not file");
+			throw new CSS_DynamicCompressor_Exception("'$path' is not file");
 		}
 		return file_get_contents($path);
 	}
@@ -594,4 +597,8 @@ class CSS_DynamicCompressor
 	{
 		return file_put_contents($this->_directory . $file, $data, LOCK_EX);
 	}
+}
+
+class CSS_DynamicCompressor_Exception extends Exception
+{
 }
