@@ -25,35 +25,40 @@ class CSS_DynamicCompressorTest extends PHPUnit_Framework_TestCase
 
 	public function testSetCharset() {
 		$charset = 'Shift_JIS';
-		$this->assertEquals($this->object->setCharset($charset), $this->object);
-		$this->assertEquals($this->object->_charset, $charset);
+		$this->assertSame($this->object->setCharset($charset), $this->object);
+		$this->assertSame($this->object->_charset, $charset);
 	}
 
 	public function testSetTarget() {
 		$target = 'filename.css';
-		$this->assertEquals($this->object->setTarget($target), $this->object);
-		$this->assertEquals($this->object->_target, $target);
+		$this->assertSame($this->object->setTarget($target), $this->object);
+		$this->assertSame($this->object->_target, $target);
 	}
 
 	public function testSetCache() {
 		$cache = 'cachename.css';
-		$this->assertEquals($this->object->setCache($cache), $this->object);
-		$this->assertEquals($this->object->_cache, $cache);
+		$this->assertSame($this->object->setCache($cache), $this->object);
+		$this->assertSame($this->object->_cache, $cache);
 	}
 
-	public function testSetExpiresDay() {
-		$expiresDay = 9000;
-		$this->assertEquals($this->object->setExpiresDay($expiresDay), $this->object);
-		$this->assertEquals($this->object->_expiresDay, $expiresDay);
+	public function testSetExpireDay() {
+		$this->assertSame($this->object->setExpireDay(1), $this->object);
+		$this->assertSame($this->object->_expires, time() + 86400);
+	}
+
+	public function testSetExpires() {
+		$expires = time() + 9000;
+		$this->assertSame($this->object->setExpires($expires), $this->object);
+		$this->assertSame($this->object->_expires, $expires);
 	}
 
 	public function testSetDirectory() {
-		$this->assertEquals($this->object->setDirectory(), $this->object);
-		$this->assertEquals($this->object->_directory, getcwd() . DIRECTORY_SEPARATOR);
+		$this->assertSame($this->object->setDirectory(), $this->object);
+		$this->assertSame($this->object->_directory, getcwd() . DIRECTORY_SEPARATOR);
 
 		$directory = dirname(__FILE__);
-		$this->assertEquals($this->object->setDirectory($directory), $this->object);
-		$this->assertEquals($this->object->_directory, $directory . DIRECTORY_SEPARATOR);
+		$this->assertSame($this->object->setDirectory($directory), $this->object);
+		$this->assertSame($this->object->_directory, $directory . DIRECTORY_SEPARATOR);
 
 		try {
 			$this->object->setDirectory('./does_not_exists_directory');
@@ -65,8 +70,8 @@ class CSS_DynamicCompressorTest extends PHPUnit_Framework_TestCase
 
 	public function testSetCSSFiles() {
 		$files = array('file1.css', 'file2.css');
-		$this->assertEquals($this->object->setCSSFiles($files), $this->object);
-		$this->assertEquals($this->object->_cssFiles, $files);
+		$this->assertSame($this->object->setCSSFiles($files), $this->object);
+		$this->assertSame($this->object->_cssFiles, $files);
 	}
 
 	public function testSetCommentOptions()
@@ -81,26 +86,26 @@ class CSS_DynamicCompressorTest extends PHPUnit_Framework_TestCase
 
 	public function testSetBaseUrl() {
 		$url = 'http://localhost/css';
-		$this->assertEquals($this->object->setBaseUrl($url), $this->object);
-		$this->assertEquals($this->object->_baseUrl, "$url/");
+		$this->assertSame($this->object->setBaseUrl($url), $this->object);
+		$this->assertSame($this->object->_baseUrl, "$url/");
 
 		$url = 'localhost/css';
-		$this->assertEquals($this->object->setBaseUrl($url), $this->object);
-		$this->assertEquals($this->object->_baseUrl, "http://$url/");
+		$this->assertSame($this->object->setBaseUrl($url), $this->object);
+		$this->assertSame($this->object->_baseUrl, "http://$url/");
 
 		$_SERVER['HTTPS'] = true;
-		$this->assertEquals($this->object->setBaseUrl($url), $this->object);
-		$this->assertEquals($this->object->_baseUrl, "https://$url/");
+		$this->assertSame($this->object->setBaseUrl($url), $this->object);
+		$this->assertSame($this->object->_baseUrl, "https://$url/");
 	}
 
 	public function testSetCSS3Fix() {
-		$this->assertEquals($this->object->setCSS3Fix(true), $this->object);
+		$this->assertSame($this->object->setCSS3Fix(true), $this->object);
 		$this->assertFalse($this->object->setCSS3Fix(false)->_css3Fix);
 		$this->assertTrue($this->object->setCSS3Fix(true)->_css3Fix);
 	}
 
 	public function testGetCSS() {
-		$this->assertEquals($this->object->_css, $this->object->getCSS());
+		$this->assertSame($this->object->_css, $this->object->getCSS());
 	}
 
 	/**
@@ -115,7 +120,7 @@ class CSS_DynamicCompressorTest extends PHPUnit_Framework_TestCase
 
 	public function testConcatenation() {
 		$this->object->concatenation();
-		$this->assertEquals(
+		$this->assertSame(
 			$this->object->_css,
 			file_get_contents("{$this->expDirectory}/concatnation.css")
 		);
@@ -123,7 +128,7 @@ class CSS_DynamicCompressorTest extends PHPUnit_Framework_TestCase
 
 	public function testExtractCSSFiles() {
 		$this->object->extractCSSFiles();
-		$this->assertEquals($this->object->_cssFiles, $this->cssFiles);
+		$this->assertSame($this->object->_cssFiles, $this->cssFiles);
 	}
 
 	public function testCompress() {
@@ -135,7 +140,7 @@ class CSS_DynamicCompressorTest extends PHPUnit_Framework_TestCase
 		}
 
 		$this->object->concatenation()->compress();
-		$this->assertEquals(
+		$this->assertSame(
 			$this->object->_css,
 			file_get_contents("{$this->expDirectory}/compress.css")
 		);
@@ -150,7 +155,7 @@ class CSS_DynamicCompressorTest extends PHPUnit_Framework_TestCase
 		}
 
 		$this->object->concatenation()->compress()->fixCSS3();
-		$this->assertEquals(
+		$this->assertSame(
 			$this->object->_css,
 			file_get_contents("{$this->expDirectory}/fixcss3.css")
 		);

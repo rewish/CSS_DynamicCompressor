@@ -4,7 +4,7 @@
  *
  * PHP versions >= 5.2
  *
- * @version      0.4.5
+ * @version      0.4.6
  * @author       Hiroshi Hoaki <rewish.org@gmail.com>
  * @copyright    (c) 2010-2011 rewish
  * @link         http://rewish.org/php_mysql/css_dynamic_compressor
@@ -15,7 +15,7 @@ class CSS_DynamicCompressor
 	/**
 	 * Version
 	 */
-	const VERSION = '0.4.5';
+	const VERSION = '0.4.6';
 
 	/**
 	 * String "TARGET"
@@ -100,7 +100,7 @@ class CSS_DynamicCompressor
 	 * Expires day
 	 * @var integer
 	 */
-	protected $_expiresDay = 30;
+	protected $_expires = 2592000;
 
 	/**
 	 * Fix CSS3 vendor prefixes
@@ -200,9 +200,21 @@ class CSS_DynamicCompressor
 	 * @param integer $day
 	 * @return CSS_DynamicCompressor
 	 */
-	public function setExpiresDay($day)
+	public function setExpireDay($day)
 	{
-		$this->_expiresDay = $day;
+		$this->_expires = strtotime("+{$day} day");
+		return $this;
+	}
+
+	/**
+	 * Set expires time
+	 *
+	 * @param integer $time
+	 * @return CSS_DynamicCompressor
+	 */
+	public function setExpires($time)
+	{
+		$this->_expires = $time;
 		return $this;
 	}
 
@@ -485,7 +497,7 @@ class CSS_DynamicCompressor
 	{
 		header('Content-Type: text/css');
 		header('Last-Modified: '. gmdate('D, d M Y H:i:s', $this->_lastModified) .' GMT');
-		header('Expires: '. gmdate('D, d M Y H:i:s', strtotime("+{$this->_expireDay} day")) .' GMT');
+		header('Expires: '. gmdate('D, d M Y H:i:s', $this->_expires) .' GMT');
 		ob_start('ob_gzhandler');
 		return $this;
 	}
