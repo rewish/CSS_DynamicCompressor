@@ -593,7 +593,7 @@ class CSS_DynamicCompressor
 			throw new CSS_DynamicCompressor_Exception("'$path' does not exist");
 		}
 		if (!is_file($path)) {
-			throw new CSS_DynamicCompressor_Exception("'$path' is not file");
+			throw new CSS_DynamicCompressor_Exception("'$path' is no file");
 		}
 		return file_get_contents($path);
 	}
